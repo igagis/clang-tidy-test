@@ -31,7 +31,7 @@ jobs:
       - name: git clone
         uses: actions/checkout@v3
       - name: build
-        run: make
+        run: make verbose=true
 ##### macosx #####
   macosx:
     runs-on: macos-latest
@@ -50,4 +50,4 @@ jobs:
       uses: myci-actions/export-env-var@master
       with: {name: PATH, value: "/usr/local/opt/make/libexec/gnubin:$PATH"}
     - name: build
-      run: make
+      run: make verbose=true
