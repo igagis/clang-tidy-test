@@ -1,4 +1,4 @@
-include prorab.mk
+include $(d)prorab.mk
 
 this_name := test
 
