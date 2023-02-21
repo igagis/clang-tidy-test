@@ -1,0 +1,1 @@
+This repo is a minimal reproducer for 2 false-positive "potential memory leak" warnings from clang-tidy.

@@ -30,6 +30,8 @@ jobs:
           apt --quiet install --assume-yes clang-tidy make g++
       - name: git clone
         uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: build
         run: make verbose=true
 ##### macosx #####
@@ -38,6 +40,8 @@ jobs:
     steps:
     - name: git clone
       uses: actions/checkout@v3
+      with:
+          submodules: true
     - name: install clang-tidy and clang-format
       run: |
         brew install llvm
