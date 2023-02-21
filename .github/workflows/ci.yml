@@ -27,7 +27,7 @@ jobs:
           # # configure timezone to avoid 'tzdata' package to require user interaction during installation (needed for ubuntu:focal)
           # TZ=Europe/Helsinki ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-          apt --quiet install --assume-yes clang-tidy
+          apt --quiet install --assume-yes clang-tidy make
       - name: git clone
         uses: actions/checkout@v3
       - name: build
@@ -44,5 +44,10 @@ jobs:
         ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
         ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
         ln -s "$(brew --prefix llvm)/bin/clang-apply-replacements" "/usr/local/bin/clang-apply-replacements"
+    - name: install ci tools
+      run: brew install make
+    - name: set PATH to use latest make
+      uses: myci-actions/export-env-var@master
+      with: {name: PATH, value: "/usr/local/opt/make/libexec/gnubin:$PATH"}
     - name: build
       run: make
