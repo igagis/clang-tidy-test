@@ -1,0 +1,48 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+##### linux #####
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: debian, codename: bullseye, image_owner: , package_type: deb}
+          - {os: ubuntu, codename: focal, image_owner: , package_type: deb}
+          - {os: ubuntu, codename: jammy, image_owner: , package_type: deb}
+    runs-on: ${{ (matrix.labels == '' && 'ubuntu-latest') || matrix.labels }}
+    container: ${{ matrix.image_owner }}${{ matrix.os }}:${{ matrix.codename }}
+    name: linux - ${{ matrix.image_owner }}${{ matrix.os }}:${{ matrix.codename }}
+    steps:
+      - name: add llvm repo (for clang-format)
+        uses: myci-actions/add-deb-repo@master
+        with:
+          repo: deb http://apt.llvm.org/${{ matrix.codename }} llvm-toolchain-${{ matrix.codename }} main
+          repo-name: llvm
+          keys-asc: https://apt.llvm.org/llvm-snapshot.gpg.key
+      - name: install ci tools
+        run: |
+          # # configure timezone to avoid 'tzdata' package to require user interaction during installation (needed for ubuntu:focal)
+          # TZ=Europe/Helsinki ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+          apt --quiet install --assume-yes clang-tidy
+      - name: git clone
+        uses: actions/checkout@v3
+      - name: build
+        run: make
+##### macosx #####
+  macosx:
+    runs-on: macos-latest
+    steps:
+    - name: git clone
+      uses: actions/checkout@v3
+    - name: install clang-tidy and clang-format
+      run: |
+        brew install llvm
+        ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
+        ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
+        ln -s "$(brew --prefix llvm)/bin/clang-apply-replacements" "/usr/local/bin/clang-apply-replacements"
+    - name: build
+      run: make
