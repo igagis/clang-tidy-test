@@ -27,7 +27,7 @@ jobs:
           # # configure timezone to avoid 'tzdata' package to require user interaction during installation (needed for ubuntu:focal)
           # TZ=Europe/Helsinki ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-          apt --quiet install --assume-yes clang-tidy make
+          apt --quiet install --assume-yes clang-tidy make g++
       - name: git clone
         uses: actions/checkout@v3
       - name: build
