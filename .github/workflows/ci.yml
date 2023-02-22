@@ -27,13 +27,22 @@ jobs:
           # configure timezone to avoid 'tzdata' package to require user interaction during installation (needed for ubuntu:focal)
           TZ=Europe/Helsinki ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-          apt --quiet install --assume-yes clang-tidy make g++ git
+          apt --quiet install --assume-yes clang-tidy make g++ clang git
       - name: git clone
         uses: actions/checkout@v3
         with:
           submodules: true
+      - name: build with clang++ and save preprocessed output, no clang-tidy
+        run: make CXX=clang++ lint=off
+      - name: upload preprocessed output to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: main_${{ matrix.codename }}.ii
+          path: obj_test/src/main.ii
       - name: build
-        run: make verbose=true
+        run: |
+          make clean-all
+          make verbose=true
 ##### macosx #####
   macosx:
     runs-on: macos-latest
